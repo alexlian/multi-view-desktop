@@ -24,6 +24,7 @@ import 'view_manager/view_manager_proxies.dart';
 import 'lifecycle/lifecycle_views_controller.dart';
 import 'lifecycle/create_view_error.dart';
 import 'lifecycle/view_registry.dart';
+import 'lifecycle/hidden_reemit.dart';
 import 'log/mvd_log.dart';
 
 part 'views_manager_impl.dart';
@@ -201,8 +202,9 @@ class _MultiViewRootState extends State<_MultiViewRoot> with WidgetsBindingObser
     // if (!Platform.isLinux && !Platform.isWindows) return;
     if (_viewsManagerImpl.allRealWindowIds.isEmpty) return;
 
-    // ignore: invalid_use_of_protected_member
-    SchedulerBinding.instance.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    reemitInactiveAfterHidden(
+      () => mounted && _viewsManagerImpl.allRealWindowIds.isNotEmpty,
+    );
   }
 
   // --------------------------------------------------------------------------
