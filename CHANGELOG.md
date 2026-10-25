@@ -1,3 +1,7 @@
+## Unreleased
+
+- Fix: MacOS. A last-window close that quits the app now calls `MacosPlatformParams.onTerminate` like Cmd+Q does, instead of terminating without reaching Dart.
+
 ## 2.0.2
 
 - Fix: MacOS init window show fix.

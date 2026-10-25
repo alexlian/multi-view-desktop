@@ -103,9 +103,6 @@ class MultiviewDesktopImpl: NSObject, NSWindowDelegate {
     /// Second pass of `applicationShouldTerminate` after Dart approved quit.
     private var isConfirmTerminate = false
 
-    /// Set in `windowWillClose` when the closing window is the last managed one.
-    private var isClosingLastWindow = false
-
     weak var engine: FlutterEngine?
 
     // Temporary main NSWindow reference stored during prepareEngine(_:),
@@ -195,14 +192,10 @@ class MultiviewDesktopImpl: NSObject, NSWindowDelegate {
             return .terminateNow
         }
 
-        let closingLastWindow = isClosingLastWindow
-        isClosingLastWindow = false
-
-        // Same policy as `applicationShouldTerminateAfterLastWindowClosed`: stay in dock.
-        if closingLastWindow && terminateAfterLastWindowClosed {
-            return .terminateNow
-        }
-
+        // A last-window close that quits the app takes the same request as
+        // Cmd+Q, so `MacosPlatformParams.onTerminate` sees every quit and can
+        // finish async work (flushing buffered output) before the process
+        // ends. Answering `.terminateNow` here would skip Dart entirely.
         DispatchQueue.main.async { [weak self] in
             self?.emitOnEvent("applicationShouldTerminateRequest")
         }
@@ -801,10 +794,6 @@ class MultiviewDesktopImpl: NSObject, NSWindowDelegate {
               let viewId = viewIdForWindow(closingWindow)
         else {
             return
-        }
-
-        if windowStates[viewId]?.isPopup != true && regularWindowCount <= 1 {
-            isClosingLastWindow = true
         }
 
         if let parentWindow = sheetParents[viewId] {

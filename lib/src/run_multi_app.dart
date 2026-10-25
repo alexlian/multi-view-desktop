@@ -178,7 +178,10 @@ class MacosPlatformParams {
   /// - window close mode is `destroy`
   final bool saveLastWindowToReopen;
 
-  /// Callback on `cmd+q` shortcut. Return true to close, false to skip
+  /// Called before the app quits: on `cmd+q` / Quit from the menu, and on a
+  /// last-window close that quits the app (`closeAppAfterLastWindowClosed`).
+  /// Awaited before the process ends, so it may finish async work such as
+  /// flushing buffered output. Return true to quit, false to cancel.
   final Future<bool> Function()? onTerminate;
 
   /// Called when the user clicks the dock icon.

@@ -503,7 +503,7 @@ void Win32Window::CenterOnScreen() {
 
 - `applicationShouldTerminateAfterLastWindowClosed` is driven by `CloseMode` set from Dart, so the plugin controls whether the app stays alive after all windows close.
 - `applicationShouldHandleReopen` restores hidden windows when the user clicks the dock icon (relevant with `MacosPlatformParams.saveLastWindowToReopen`).
-- `applicationShouldTerminate` intercepts Cmd+Q and Quit from the menu. The plugin calls `MacosPlatformParams.onTerminate`; return `true` from the callback to quit, `false` to cancel.
+- `applicationShouldTerminate` intercepts Cmd+Q, Quit from the menu and a last-window close that quits the app. The plugin calls `MacosPlatformParams.onTerminate` and awaits it before the process ends; return `true` from the callback to quit, `false` to cancel.
 - `applicationDockMenu` shows `MultiPlatformParams.menuItems` / `MultiViewDesktop.setMenuItems` in the dock context menu.
 
 ---
